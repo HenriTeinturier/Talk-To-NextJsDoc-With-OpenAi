@@ -1,8 +1,10 @@
 import { ChatApp } from "./ChatApp";
 
+export const runtime = "edge";
+
 export default function Home() {
   return (
-    <div className="max-w-lg px-4 py-4 h-full m-auto">
+    <div className="max-w-2xl py-4 h-full m-auto">
       <ChatApp />
     </div>
   );
