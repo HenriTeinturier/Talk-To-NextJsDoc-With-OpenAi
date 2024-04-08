@@ -159,8 +159,8 @@ export async function POST(req: Request) {
               });
               // Ajoute ton texte personnalisé à la fin de la stream
               controller.enqueue(`\n\n### Source 
-          
-${sourcesUrl.map((r) => `* [${r}](${r})\n`).join("")}`);
+            
+  ${sourcesUrl.map((r) => `* [${r}](${r})\n`).join("")}`);
               controller.close();
               return;
             }

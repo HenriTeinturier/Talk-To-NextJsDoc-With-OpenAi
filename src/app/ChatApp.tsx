@@ -9,12 +9,21 @@ import { Textarea } from "@/components/ui/textarea";
 import ReactMarkdown from "react-markdown";
 
 import { useChat } from "ai/react";
-import { SendIcon } from "lucide-react";
+import { RefreshCcw, RefreshCcwDot, SendIcon, Square } from "lucide-react";
 import Image from "next/image";
 import Markdown from "react-markdown";
 
 export const ChatApp = () => {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    reload,
+    stop,
+    isLoading,
+    setMessages,
+  } = useChat();
 
   return (
     <div className="h-full py-4 flex flex-col gap-4 border-x px-4">
@@ -48,6 +57,30 @@ export const ChatApp = () => {
           </>
         ))}
       </ul>
+
+      {messages.length >= 1 && (
+        <div className="flex gap-2">
+          <Button
+            disabled={isLoading}
+            size="sm"
+            onClick={() => {
+              stop();
+              setMessages([]);
+            }}
+          >
+            <RefreshCcwDot size={16} className="mr-2" />
+            Reset
+          </Button>
+          <Button size="sm" disabled={isLoading} onClick={() => reload()}>
+            <RefreshCcw size={16} className="mr-2" />
+            Reload
+          </Button>
+          <Button size="sm" disabled={!isLoading} onClick={stop}>
+            <Square size={16} className="mr-2" />
+            Stop
+          </Button>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex items-end gap-2">
         <Label className="flex-1">
