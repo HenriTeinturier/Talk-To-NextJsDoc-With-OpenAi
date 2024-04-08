@@ -73,7 +73,7 @@ export async function POST(req: Request) {
     ORDER BY distances ASC;
   `;
 
-    const MAX_TOKENS = 2500;
+    const MAX_TOKENS = 1700;
     const queryParams = [MAX_TOKENS];
 
     const result = (await sql(insertQuery, queryParams)) as {
