@@ -1,8 +1,14 @@
-import { Message, OpenAIStream, StreamingTextResponse } from "ai";
+import {
+  Message,
+  OpenAIStream,
+  StreamingTextResponse,
+  streamToResponse,
+} from "ai";
 import { openai } from "@/lib/openai";
 import { getNeon } from "@/lib/neon";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { format } from "path";
+import { createServer } from "http";
 
 // Optional, but recommended: run on the edge runtime.
 // See https://vercel.com/docs/concepts/functions/edge-functions
@@ -17,6 +23,7 @@ const SYSTEM_MESSAGE = `
 
   Goal:
   Create a response to the user's question about React and NextJS.
+ 
 
   Criteria:
   To answer the question, you will be given a context of the documentation of the NextJS framework.
@@ -26,6 +33,7 @@ const SYSTEM_MESSAGE = `
   You need to use the context to create a response that is relevant to the user's question.
   Dont forget to use too the documentation of NextJS to create your response.
   Dont forget to use previous messages to create your response.
+  Always repond in the language of the user.
 
 
   Response format:
@@ -131,8 +139,41 @@ export async function POST(req: Request) {
       messages: finalMessages,
     });
 
-    const stream = OpenAIStream(openAiResponse);
-    return new StreamingTextResponse(stream);
+    const originalStream = OpenAIStream(openAiResponse);
+
+    // Écoute la fin de la stream OpenAI
+    const editedStream = new ReadableStream({
+      start(controller) {
+        const reader = originalStream.getReader();
+        read();
+
+        function read() {
+          reader.read().then(({ done, value }) => {
+            if (done) {
+              let sourcesUrl: string[] = [];
+              formattedResult.forEach((r) => {
+                const url = r.url.replace("source: ", "");
+                if (!sourcesUrl.includes(url)) {
+                  sourcesUrl.push(url);
+                }
+              });
+              // Ajoute ton texte personnalisé à la fin de la stream
+              controller.enqueue(`\n\n### Source 
+          
+${sourcesUrl.map((r) => `* [${r}](${r})\n`).join("")}`);
+              controller.close();
+              return;
+            }
+
+            // Ajoute les données de la stream OpenAI à ta nouvelle stream
+            controller.enqueue(value);
+            read();
+          });
+        }
+      },
+    });
+
+    return new StreamingTextResponse(editedStream);
   } catch (error) {
     console.error("Error fetching prompt embedding", error);
   }
