@@ -27,11 +27,11 @@ export const ChatApp = () => {
         />
         <h1 className="text-2xl font-bold">Talk with Nextjs documentation</h1>
       </header>
-      <ul className="overflow-auto flex flex-col gap-4 flex-1">
+      <ul className="overflow-auto flex flex-col gap-4 w-full flex-1">
         {messages.map((m, index) => (
           <>
             <Card key={index}>
-              <CardHeader className="flex flex-row items-center gap-3 space-y-0">
+              <CardHeader className="flex flex-row items-center gap-3 space-y-0 flex-1">
                 <Avatar className="h-8 w-8">
                   {m.role === "assistant" && (
                     <AvatarImage src="/nextjs-logo.png" alt="nextjs logo" />
