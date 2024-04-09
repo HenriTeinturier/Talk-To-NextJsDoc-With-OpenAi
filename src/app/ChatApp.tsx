@@ -18,6 +18,7 @@ import Image from "next/image";
 import Markdown from "react-markdown";
 import { useEffect, useRef, useState } from "react";
 import { CardPresentation } from "./CardPresentation";
+import { toast } from "sonner";
 
 export const ChatApp = () => {
   const {
@@ -29,7 +30,11 @@ export const ChatApp = () => {
     stop,
     isLoading,
     setMessages,
-  } = useChat();
+  } = useChat({
+    onError: () => {
+      toast.error("Too many requests. Maximum 5 requests in 10 minutes.");
+    },
+  });
   const isEmptyMessages = messages.length === 0;
   const [autoScroll, setAutoScroll] = useState(true);
   const ulRef = useRef<HTMLUListElement>(null);

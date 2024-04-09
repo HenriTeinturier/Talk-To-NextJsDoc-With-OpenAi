@@ -1,18 +1,47 @@
-import {
-  Message,
-  OpenAIStream,
-  StreamingTextResponse,
-  streamToResponse,
-} from "ai";
+import { Message, OpenAIStream, StreamingTextResponse } from "ai";
 import { openai } from "@/lib/openai";
 import { getNeon } from "@/lib/neon";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
-import { format } from "path";
-import { createServer } from "http";
+import { headers } from "next/headers";
+import { toast } from "sonner";
 
 // Optional, but recommended: run on the edge runtime.
 // See https://vercel.com/docs/concepts/functions/edge-functions
 export const runtime = "edge";
+
+const checkUsage = async () => {
+  const headerList = headers();
+  const ip = headerList.get("x-real-ip") || headerList.get("x-forwarded-for");
+
+  // check if the ip has not made more than 5 requests in the last 10 minutes
+  const sql = getNeon();
+
+  const searchQuery = `
+  SELECT COUNT(*) AS count
+  FROM usage
+  WHERE ip_address = $1 AND created_at > NOW() - INTERVAL '10 minutes';
+  `;
+
+  const searchQueryParams = [ip];
+
+  const searchResult = (await sql(searchQuery, searchQueryParams)) as {
+    count: number;
+  }[];
+
+  if (searchResult[0].count > 5) {
+    throw new Error("Too many requests");
+  }
+
+  // insert the ip address
+  const insertQuery = `
+  INSERT INTO usage (ip_address)
+  VALUES ($1);
+  `;
+
+  const insertQueryParams = [ip];
+
+  await sql(insertQuery, insertQueryParams);
+};
 
 const SYSTEM_MESSAGE = `
   Your role:
@@ -46,6 +75,12 @@ const SYSTEM_MESSAGE = `
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   const { messages } = (await req.json()) as { messages: Message[] };
+
+  try {
+    await checkUsage();
+  } catch (error) {
+    return new Response("Too many requests", { status: 429 });
+  }
 
   const userPromptHistoric = messages.filter((m) => m.role === "user");
   const userPromptHistoricContent = userPromptHistoric
