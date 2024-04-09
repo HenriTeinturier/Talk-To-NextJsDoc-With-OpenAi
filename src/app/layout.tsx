@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
+import { ThemeProvider } from "./utils/theme-provider";
 
 // const inter = Inter({ subsets: ["latin"] });
 
@@ -22,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full w-full">
       <body className={cn(GeistMono.variable, GeistSans.variable, "h-full")}>
-        <Toaster />
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <Toaster />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
