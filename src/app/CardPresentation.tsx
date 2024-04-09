@@ -12,33 +12,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
-import {
-  BookDown,
-  Bot,
-  Calculator,
-  Calendar,
-  CreditCard,
-  Github,
-  GithubIcon,
-  Linkedin,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
+import { Command, CommandGroup, CommandList } from "@/components/ui/command";
+import { BookDown, Bot, Github, GithubIcon, Linkedin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -49,7 +26,7 @@ export const CardPresentation = () => {
       <CardHeader>
         {/* <CardTitle>Provided by Henri Teinturier</CardTitle> */}
         <CardDescription>
-          {"A chatbot about"}{" "}
+          {"A chatbot on"}{" "}
           {
             <Link
               href="https://nextjs.org"
@@ -65,9 +42,7 @@ export const CardPresentation = () => {
               Next.js
             </Link>
           }{" "}
-          {
-            "documentation. The documentation was scraped and cleaned for AI use with"
-          }{" "}
+          {". Doc was scraped and cleaned for AI with"}{" "}
           {
             <Link
               href="https://playwright.dev/"
@@ -98,9 +73,9 @@ export const CardPresentation = () => {
               />
               Cheerio
             </Link>
-          }{" "}
+          }
           {
-            ". The model used for embeddings is text-embedding-3-small. The documentation is stored in a"
+            ". Embeddings Model is text-embedding-3-small. Datas are Stored in a"
           }{" "}
           {
             <Link
@@ -116,8 +91,8 @@ export const CardPresentation = () => {
               />
               vector database
             </Link>
-          }{" "}
-          {". The model powering this chatbot is"}{" "}
+          }
+          {". "}
           {
             <Link
               href="https://openai.com/"
@@ -133,9 +108,8 @@ export const CardPresentation = () => {
               gpt-3.5-turbo-0125
             </Link>
           }{" "}
-          {". gpt-4-0125-preview"}{" "}
           {
-            "is much more efficient in its responses. If you wish to use it, you can retrieve the GitHub repository below."
+            "is the Api model. If you wish to use GPT-4, you can retrieve the GitHub repository below."
           }
         </CardDescription>
         <div className="flex justify-between whitespace-pre-wrap flex-wrap">
@@ -213,8 +187,6 @@ export const CardPresentation = () => {
           </CommandList>
         </Command>
       </CardContent>
-      {/* <CardFooter>
-      </CardFooter> */}
     </Card>
   );
 };

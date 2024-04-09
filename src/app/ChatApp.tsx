@@ -80,6 +80,7 @@ export const ChatApp = () => {
         />
         <h1 className="text-2xl font-bold">Talk to Next.js Doc with OpenAi</h1>
       </header>
+
       <ul
         className="overflow-auto flex flex-col gap-4 w-full flex-1"
         ref={ulRef}
