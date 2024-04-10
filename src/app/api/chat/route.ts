@@ -175,8 +175,6 @@ export async function POST(req: Request) {
       messages: finalMessages,
     });
 
-    console.log("formatted result", formattedResult);
-
     const originalStream = OpenAIStream(openAiResponse);
 
     // Écoute la fin de la stream OpenAI
@@ -187,6 +185,7 @@ export async function POST(req: Request) {
 
         function read() {
           reader.read().then(({ done, value }) => {
+            // console.log("value", value);
             if (done) {
               let sourcesUrl: string[] = [];
               formattedResult.forEach((r) => {
@@ -196,11 +195,18 @@ export async function POST(req: Request) {
                 }
               });
               // Ajoute ton texte personnalisé à la fin de la stream
-              controller.enqueue(`\n\n### Sources:`);
+              // controller.enqueue(`\n\n### Sources:`);
+              // console.log(new TextEncoder().encode(`\n\n### Sources:`));
+              controller.enqueue(new TextEncoder().encode(`\n\n### Sources:`));
               controller.enqueue(
-                `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
+                new TextEncoder().encode(
+                  `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
+                )
               );
-              // controller.enqueue(value);
+
+              // controller.enqueue(
+              //   `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
+              // );
 
               controller.close();
               return;
