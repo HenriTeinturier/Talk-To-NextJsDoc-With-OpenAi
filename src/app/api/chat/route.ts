@@ -3,7 +3,6 @@ import { openai } from "@/lib/openai";
 import { getNeon } from "@/lib/neon";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { headers } from "next/headers";
-import { toast } from "sonner";
 
 // Optional, but recommended: run on the edge runtime.
 // See https://vercel.com/docs/concepts/functions/edge-functions
@@ -200,8 +199,6 @@ export async function POST(req: Request) {
               controller.close();
               return;
             }
-
-            console.log("value", value);
 
             // Ajoute les données de la stream OpenAI à ta nouvelle stream
             controller.enqueue(value);
