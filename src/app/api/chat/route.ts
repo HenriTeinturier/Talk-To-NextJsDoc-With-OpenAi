@@ -194,19 +194,12 @@ export async function POST(req: Request) {
                   sourcesUrl.push(url);
                 }
               });
-              // Ajoute ton texte personnalisé à la fin de la stream
-              // controller.enqueue(`\n\n### Sources:`);
-              // console.log(new TextEncoder().encode(`\n\n### Sources:`));
               controller.enqueue(new TextEncoder().encode(`\n\n### Sources:`));
               controller.enqueue(
                 new TextEncoder().encode(
                   `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
                 )
               );
-
-              // controller.enqueue(
-              //   `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
-              // );
 
               controller.close();
               return;
