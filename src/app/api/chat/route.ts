@@ -123,7 +123,7 @@ export async function POST(req: Request) {
       file_path: string;
     }[];
 
-    const formattedResult = result.map((r) => {
+    const formattedResult = await result.map((r) => {
       return {
         url:
           "source: " +
@@ -137,14 +137,16 @@ export async function POST(req: Request) {
       return `url: ${r.url}: "\n"context:  ${r.content}`;
     });
 
-    const otherMessages = messages.slice(0, messages.length - 1).map((m) => {
-      const mess: ChatCompletionMessageParam = {
-        role: m.role as "assistant" | "user",
-        content: String(m.content),
-      };
+    const otherMessages = await messages
+      .slice(0, messages.length - 1)
+      .map((m) => {
+        const mess: ChatCompletionMessageParam = {
+          role: m.role as "assistant" | "user",
+          content: String(m.content),
+        };
 
-      return mess;
-    });
+        return mess;
+      });
 
     const finalMessages: Array<ChatCompletionMessageParam> = [
       {
@@ -173,10 +175,12 @@ export async function POST(req: Request) {
       messages: finalMessages,
     });
 
+    console.log("formatted result", formattedResult);
+
     const originalStream = OpenAIStream(openAiResponse);
 
     // Écoute la fin de la stream OpenAI
-    const editedStream = new ReadableStream({
+    const editedStream = await new ReadableStream({
       start(controller) {
         const reader = originalStream.getReader();
         read();
@@ -192,10 +196,12 @@ export async function POST(req: Request) {
                 }
               });
               // Ajoute ton texte personnalisé à la fin de la stream
-              controller.enqueue(`\n### Sources:\n`);
+              controller.enqueue(`\n\n### Sources:`);
               controller.enqueue(
                 `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
               );
+              // controller.enqueue(value);
+
               controller.close();
               return;
             }
