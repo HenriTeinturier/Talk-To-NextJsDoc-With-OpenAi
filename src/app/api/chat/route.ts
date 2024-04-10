@@ -28,7 +28,7 @@ const checkUsage = async () => {
     count: number;
   }[];
 
-  if (searchResult[0].count > 5) {
+  if (searchResult[0].count > 50) {
     throw new Error("Too many requests");
   }
 
@@ -193,12 +193,15 @@ export async function POST(req: Request) {
                 }
               });
               // Ajoute ton texte personnalisé à la fin de la stream
-              controller.enqueue(`\n\n### Source 
-            
-  ${sourcesUrl.map((r) => `* [${r}](${r})\n`).join("")}`);
+              controller.enqueue(`\n### Sources:\n`);
+              controller.enqueue(
+                `\n\n ${sourcesUrl.map((r) => `- [${r}](${r})\n`).join("")}`
+              );
               controller.close();
               return;
             }
+
+            console.log("value", value);
 
             // Ajoute les données de la stream OpenAI à ta nouvelle stream
             controller.enqueue(value);
