@@ -38,6 +38,7 @@ export const ChatApp = () => {
   const isEmptyMessages = messages.length === 0;
   const [autoScroll, setAutoScroll] = useState(true);
   const ulRef = useRef<HTMLUListElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
 
   // Pas recommandé
   useEffect(() => {
@@ -151,9 +152,16 @@ export const ChatApp = () => {
             value={input}
             onChange={handleInputChange}
             className="mt-2"
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+
+                submitButtonRef.current?.click();
+              }
+            }}
           />
         </Label>
-        <Button type="submit" size={"sm"}>
+        <Button type="submit" size={"sm"} ref={submitButtonRef}>
           <SendIcon size={16} />
         </Button>
       </form>
