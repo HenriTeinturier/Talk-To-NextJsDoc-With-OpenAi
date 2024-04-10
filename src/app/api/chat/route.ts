@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 // Optional, but recommended: run on the edge runtime.
 // See https://vercel.com/docs/concepts/functions/edge-functions
 export const runtime = "edge";
+const MAX_REQUESTS = 10;
 
 const checkUsage = async () => {
   const headerList = headers();
@@ -27,8 +28,10 @@ const checkUsage = async () => {
     count: number;
   }[];
 
-  if (searchResult[0].count > 50) {
-    throw new Error("Too many requests");
+  if (searchResult[0].count > MAX_REQUESTS) {
+    throw new Error(
+      `Too many requests. Maximum ${MAX_REQUESTS} requests in 10 minutes.`
+    );
   }
 
   // insert the ip address
@@ -78,7 +81,10 @@ export async function POST(req: Request) {
   try {
     await checkUsage();
   } catch (error) {
-    return new Response("Too many requests", { status: 429 });
+    return new Response(
+      `Too many requests. Max ${MAX_REQUESTS} requests in 10 minutes.`,
+      { status: 429 }
+    );
   }
 
   const userPromptHistoric = messages.filter((m) => m.role === "user");

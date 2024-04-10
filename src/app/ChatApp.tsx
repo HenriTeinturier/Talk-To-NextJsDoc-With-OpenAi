@@ -31,8 +31,8 @@ export const ChatApp = () => {
     isLoading,
     setMessages,
   } = useChat({
-    onError: () => {
-      toast.error("Too many requests. Maximum 5 requests in 10 minutes.");
+    onError: (error) => {
+      toast.error(error.message);
     },
   });
   const isEmptyMessages = messages.length === 0;
